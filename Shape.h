@@ -6,7 +6,7 @@
 class Shape
 {
 protected:
-	Point2D position;
+	Point2D pos;
 	float angle;
 	Point2D pivot;
 	float torque;
@@ -14,8 +14,7 @@ protected:
 public:
 	Shape();
 	~Shape();
-	Shape(Point2D position);
-	Shape(Point2D position, float angle, Point2D pivot);
-	bool DetectCollision(Shape Other);
+	Shape(Point2D pos);
+	Shape(Point2D pos, float angle, Point2D pivot);
 	virtual void render(SDL_Renderer *renderer);
 };

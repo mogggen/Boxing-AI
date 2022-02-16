@@ -167,7 +167,7 @@ int main(int argc, char* argv[])
 
 
 
-		//checks cursor position
+		//checks cursor pos
 		if (0 < event.motion.x &&
 			windowWidth > event.motion.x &&
 			0 < event.motion.y &&
@@ -197,6 +197,25 @@ int main(int argc, char* argv[])
 		SDL_SetRenderDrawColor(renderer, 195, 176, 145, 0);
 		SDL_RenderClear(renderer); // clear wiht the render color
 
+		SDL_Texture *Tile = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, s, s * 4);
+
+		unsigned char *bytes = nullptr;
+
+		int pitch = 0;
+
+		SDL_LockTexture(Tile, nullptr, reinterpret_cast<void**>(&bytes), &pitch);
+		unsigned char rgba[4] = { 120, 80, 39, 255 };
+		for (size_t y = 0; y < s * 4; y++)
+		{
+			for (size_t x = 0; x < s; x++)
+			{
+				memcpy(&bytes[(y * s + x) * sizeof(rgba)], rgba, sizeof(rgba));
+			}
+		}
+		SDL_UnlockTexture(Tile);
+		SDL_Rect destination = { 320, 240, s, s * 4 };
+		SDL_RenderCopyEx(renderer, Tile, NULL, &destination, SDL_GetTicks() * 0.03, NULL, SDL_FLIP_NONE);
+
 		//tables
 		SDL_SetRenderDrawColor(renderer, 120, 80, 39, 0);
 
@@ -208,7 +227,7 @@ int main(int argc, char* argv[])
 
 		//head
 		SDL_SetRenderDrawColor(renderer, 150, 50, 99, 0);
-		head->render(renderer);
+		// head->render(renderer);
 
 		//torso
 		SDL_SetRenderDrawColor(renderer, 195, 50, 99, 0);
@@ -240,7 +259,7 @@ int main(int argc, char* argv[])
 		SDL_RenderPresent(renderer);
 
 
-		SDL_Delay(3000);
+		SDL_Delay(100);
 		// deltaTime = SDL_GetTicks() - deltaTime;
 		// if (frameDelay > deltaTime)
 		// 	SDL_Delay(frameDelay - deltaTime);

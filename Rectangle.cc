@@ -25,12 +25,15 @@ void Rectangle::render(SDL_Renderer *renderer)
 	int x1, y1, x2, y2;
 	for (float i = 0; i < height; i++)
 	{
+		// two dimensional rotation
 		x1 = (int)round(pivot.GetX() * cos(angle) - (i + pivot.GetY()) * sin(angle));
 		y1 = (int)round(pivot.GetX() * sin(angle) + (i + pivot.GetY()) * cos(angle));
 
 		x2 = (int)round(width * cos(angle) - (i + pivot.GetY()) * sin(angle));
 		y2 = (int)round(width * sin(angle) + (i + pivot.GetY()) * cos(angle));
 
+
+		// offsetting shape to desired location
 		x1 += pos.GetX() + pivot.GetX();
 		y1 += pos.GetY() + pivot.GetY();
 		x2 += pos.GetX() + pivot.GetX();
@@ -40,11 +43,11 @@ void Rectangle::render(SDL_Renderer *renderer)
 	}
 }
 
-bool Rectangle::DetectCollision(Shape other)
+bool Rectangle::DetectCollision(Rectangle other)
 {
 	// check edges
 	if (Point2D
-		(position +
+		(pos +
 		velocity +
 		Point2D (width *
 		cos(angle +
@@ -55,7 +58,7 @@ bool Rectangle::DetectCollision(Shape other)
 		).x
 		<
 		Point2D
-		(other.position +
+		(other.pos +
 		other.velocity +
 		Point2D(other.width *
 		cos(other.angle +
@@ -65,9 +68,10 @@ bool Rectangle::DetectCollision(Shape other)
 		other.torque))
 		).x
 
+		&&
 
 		Point2D
-		(position +
+		(pos +
 		velocity +
 		Point2D (width *
 		cos(angle +
@@ -76,9 +80,9 @@ bool Rectangle::DetectCollision(Shape other)
 		sin(angle +
 		torque))
 		).x
-		<
+		>
 		Point2D
-		(other.position +
+		(other.pos +
 		other.velocity +
 		Point2D(other.width *
 		cos(other.angle +
@@ -91,7 +95,7 @@ bool Rectangle::DetectCollision(Shape other)
 	
 	
 	//if colliding
-	return true
+	return true;
 }
 
 void Rectangle::CollisionResponse(Point2D newVelocity, float newTorque, Point2D newForce)

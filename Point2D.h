@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-class Point2D
+struct Point2D
 {
 	float x, y;
 public:
