@@ -225,6 +225,8 @@ int main(int argc, char* argv[])
 		int tempAngle = SDL_GetTicks() * 0.03;
 		SDL_RenderCopyEx(renderer, Tile, NULL, &destination, tempAngle, NULL, SDL_FLIP_NONE);
 
+		int minX = 2147483647, maxX = -2147483648, minY = 2147483647, maxY = -2147483648;
+
 		// top-left
 		int tlX = -s * cos(fromDegtoRad(tempAngle)) + s * 4 * sin(fromDegtoRad(tempAngle)) + 320;
 		int tlY = -s * sin(fromDegtoRad(tempAngle)) - s * 4 * cos(fromDegtoRad(tempAngle)) + 240;
@@ -240,26 +242,99 @@ int main(int argc, char* argv[])
 		//bottom-right
 		int brX = s * cos(fromDegtoRad(tempAngle)) - s * 4 * sin(fromDegtoRad(tempAngle)) + 320 + s;
 		int brY = s * sin(fromDegtoRad(tempAngle)) + s * 4 * cos(fromDegtoRad(tempAngle)) + 240 + s * 4;
+
+		if (minX > tlX)
+			minX = tlX;
+		if (maxX < tlX)
+			maxX = tlX;
+		if (minY > tlX)
+			minY = tlX;
+		if (maxY = tlX)
+			maxY = tlX;
+		
+		if (minX > tlY)
+			minX = tlY;
+		if (maxX < tlY)
+			maxX = tlY;
+		if (minY > tlY)
+			minY = tlY;
+		if (maxY = tlY)
+			maxY = tlY;
+
+		if (minX > trX)
+			minX = trX;
+		if (maxX < trX)
+			maxX = trX;
+		if (minY > trX)
+			minY = trX;
+		if (maxY = trX)
+			maxY = trX;
+		
+		if (minX > trY)
+			minX = trY;
+		if (maxX < trY)
+			maxX = trY;
+		if (minY > trY)
+			minY = trY;
+		if (maxY = trY)
+			maxY = trY;
+
+		if (minX > blX)
+			minX = blX;
+		if (maxX < blX)
+			maxX = blX;
+		if (minY > blX)
+			minY = blX;
+		if (maxY = blX)
+			maxY = blX;
+		
+		if (minX > blY)
+			minX = blY;
+		if (maxX < blY)
+			maxX = blY;
+		if (minY > blY)
+			minY = blY;
+		if (maxY = blY)
+			maxY = blY;
+
+		if (minX > brX)
+			minX = brX;
+		if (maxX < brX)
+			maxX = brX;
+		if (minY > brX)
+			minY = brX;
+		if (maxY = brX)
+			maxY = brX;
+		
+		if (minX > brY)
+			minX = brY;
+		if (maxX < brY)
+			maxX = brY;
+		if (minY > brY)
+			minY = brY;
+		if (maxY = brY)
+			maxY = brY;
+		
 		
 		SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
 		//top-left to bottom-left
 		SDL_RenderDrawLineF(renderer,
-		blX, tlY,
-		blX, brY);
+		minX, minY,
+		minX, maxY);
 		//top-right to bottom-right
 		SDL_RenderDrawLineF(renderer,
-		trX, tlY,
-		trX, brY
+		maxX, minY,
+		maxX, maxY
 		);
 		//top-left to top-right
 		SDL_RenderDrawLineF(renderer,
-		blX, tlY,
-		trX, tlY
+		minX, minY,
+		maxX, minY
 		);
 		//bottom-left to bottom-right
 		SDL_RenderDrawLineF(renderer,
-		blX, brY,
-		trX, brY);
+		minX, maxY,
+		maxX, maxY);
 		
 
 
