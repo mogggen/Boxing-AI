@@ -43,8 +43,19 @@ void Rectangle::render(SDL_Renderer *renderer)
 	}
 }
 
-bool Rectangle::DetectCollision(Rectangle other)
+bool Rectangle::DetectCollision(int& x1, int& x2, int& y1, int& y2, Rectangle other)
 {
+	// make AABB
+	
+	// two dimensional rotation
+	// x1 = (int)round(pivot.GetX() * cos(angle) - (i + pivot.GetY()) * sin(angle));
+	// y1 = (int)round(pivot.GetX() * sin(angle) + (i + pivot.GetY()) * cos(angle));
+
+	// x2 = (int)round(width / 2 * cos(angle) - (i + pivot.GetY()) * sin(angle));
+	// y2 = (int)round(width / 2 * sin(angle) + (i + pivot.GetY()) * cos(angle));
+
+	// SDL_RenderDrawLineF(renderer, x1, y1, x2, y2);
+
 	// check edges
 	if (Point2D
 		(pos +

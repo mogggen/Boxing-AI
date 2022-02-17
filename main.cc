@@ -16,6 +16,11 @@ float aiming(float px, float py, float mx, float my)
 		return atan(float(py - my) / float(px - mx));
 }
 
+float fromDegtoRad(float degrees)
+{
+	return degrees * M_PI / 180.f;
+}
+
 int main(int argc, char* argv[])
 {
 	bool isInMenu = true;
@@ -195,7 +200,10 @@ int main(int argc, char* argv[])
 
 		//Background
 		SDL_SetRenderDrawColor(renderer, 195, 176, 145, 0);
-		SDL_RenderClear(renderer); // clear wiht the render color
+		SDL_RenderClear(renderer); // clear with the render color
+
+
+		//stuff that works
 
 		SDL_Texture *Tile = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, s, s * 4);
 
@@ -213,11 +221,53 @@ int main(int argc, char* argv[])
 			}
 		}
 		SDL_UnlockTexture(Tile);
-		SDL_Rect destination = { 320, 240, s, s * 4 };
-		SDL_RenderCopyEx(renderer, Tile, NULL, &destination, SDL_GetTicks() * 0.03, NULL, SDL_FLIP_NONE);
+		SDL_Rect destination = { 320, 240, s, s * 4 }; // top-left corner
+		int tempAngle = SDL_GetTicks() * 0.03;
+		SDL_RenderCopyEx(renderer, Tile, NULL, &destination, tempAngle, NULL, SDL_FLIP_NONE);
+
+		// top-left
+		int tlX = -s * cos(fromDegtoRad(tempAngle)) + s * 4 * sin(fromDegtoRad(tempAngle)) + 320;
+		int tlY = -s * sin(fromDegtoRad(tempAngle)) - s * 4 * cos(fromDegtoRad(tempAngle)) + 240;
+
+		//bottom-left
+		int blX = -s * cos(fromDegtoRad(tempAngle)) - s * 4 * sin(fromDegtoRad(tempAngle)) + 320;
+		int blY = -s * sin(fromDegtoRad(tempAngle)) + s * 4 * cos(fromDegtoRad(tempAngle)) + 240 + s * 4;
+
+		//top-right
+		int trX = s * cos(fromDegtoRad(tempAngle)) + s * 4 * sin(fromDegtoRad(tempAngle)) + 320 + s;
+		int trY = s * sin(fromDegtoRad(tempAngle)) - s * 4 * cos(fromDegtoRad(tempAngle)) + 240;
+
+		//bottom-right
+		int brX = s * cos(fromDegtoRad(tempAngle)) - s * 4 * sin(fromDegtoRad(tempAngle)) + 320 + s;
+		int brY = s * sin(fromDegtoRad(tempAngle)) + s * 4 * cos(fromDegtoRad(tempAngle)) + 240 + s * 4;
+		
+		SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+		//top-left to bottom-left
+		SDL_RenderDrawLineF(renderer,
+		blX, tlY,
+		blX, brY);
+		//top-right to bottom-right
+		SDL_RenderDrawLineF(renderer,
+		trX, tlY,
+		trX, brY
+		);
+		//top-left to top-right
+		SDL_RenderDrawLineF(renderer,
+		blX, tlY,
+		trX, tlY
+		);
+		//bottom-left to bottom-right
+		SDL_RenderDrawLineF(renderer,
+		blX, brY,
+		trX, brY);
+		
+
+
+		//end of stuff that works
 
 		//tables
 		SDL_SetRenderDrawColor(renderer, 120, 80, 39, 0);
+		SDL_RenderDrawLineF(renderer, 0, 240, 320, 240);
 
 		//reloading
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
