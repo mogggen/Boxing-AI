@@ -22,17 +22,9 @@ void ABoxer::SetHeadVelocity(FVector _headVelocity)
 	headVelocity = _headVelocity;
 }
 
-void ReadPhysicsProperties(float* Velocities, FVector& centerOfMass)
-{
-
-}
-
 // Called every frame
 void ABoxer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	//print("Problem?");
-	if (GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("the heads velocity in the X-axis is %f"), headVelocity.X));
 }
 
