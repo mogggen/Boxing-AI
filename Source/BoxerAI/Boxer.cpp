@@ -17,14 +17,37 @@ void ABoxer::BeginPlay()
 	
 }
 
-void ABoxer::SetHeadVelocity(FVector _headVelocity)
+void ABoxer::SetPosition(const int index, const FVector _position)
 {
-	headVelocity = _headVelocity;
+	position[index] = _position;
+}
+
+void ABoxer::SetVelocity(const int index, const FVector _velocity)
+{
+	velocity[index] = _velocity;
+}
+
+void ABoxer::SetDirectionalVectors(const int index, const FVector _forwardVector, const FVector _rightVector, const FVector _upVector)
+{
+	forwardVector[index] = _forwardVector;
+	rightVector[index] = _rightVector;
+	upVector[index] = _upVector;
+}
+
+FVector ABoxer::GetForce(const int index)
+{
+	return force[index];
 }
 
 // Called every frame
 void ABoxer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (GEngine)
+	{
+		// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("the heads position in the X-axis is %f"), bodyPartsPosition[0].Y));
+		// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("the heads velocity in the X-axis is %f"), bodyPartsVelocity[0].Y));
+	}
 }
 

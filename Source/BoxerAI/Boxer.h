@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include <ctime>
+#include <fstream>
 #include "Boxer.generated.h"
 
 UCLASS()
@@ -23,145 +25,70 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Head
-	UPROPERTY(EditAnywhere)
-	FVector headVelocity;
-
-	UFUNCTION(BlueprintCallable)
-	void SetHeadVelocity(FVector);
-
-
-	// Torso
-	UPROPERTY(EditAnywhere)
-	FVector upperTorsoVelocity;
-
-	UFUNCTION(BlueprintCallable)
-	void SetUpperTorsoVelocity(FVector);
-
-
-	UPROPERTY(EditAnywhere)
-	FVector middleTorsoVelocity;
-
-	UFUNCTION(BlueprintCallable)
-	void SetMiddleTorsoVelocity(FVector);
-
+	//Reinforment learning
+	// one game at a time
+	// AI with higher scores are proportionally more likely to survive
+	// The NN will mutate randomly in search of favorable mutations
 	
+	// landing on your head -40 points
+	// landing on your Shoulder -80 points
+	// landing on your gloves -30 points
+	// landing on feet +50 p (+ cm from the center of the ring)
+	// landing on your other bodyparts -20 points
+	// landing a punch on the opponent +500 points (* ForceFactor)
+
+	// 95 inputs
+	// L-R
+	//  0
+	// 123
+	// 456
+	// 789
+	// ABC
+	// D E
+	// F G
+	// H I
+
+	// First Layer
+	// hidden neurons 2 / 3 * (95 + 19)
+
+	// Second Layer
+	// hidden neurons 1 / 3 * (95 + 19)
+	
+	// 19 outputs (from -1 to 1) * multiplied to apply a force of -1000 to 1000
+	
+	// Forces
 	UPROPERTY(EditAnywhere)
-	FVector lowerTorsoVelocity;
+	FVector force[19];
 
-	UFUNCTION(BlueprintCallable)
-	void SetLowerTorsoVelocity(FVector);
-
-
+	// Positions
 	UPROPERTY(EditAnywhere)
-	FVector hipVelocity;
+	FVector position[19];
 
-	UFUNCTION(BlueprintCallable)
-	void SetHipVelocity(FVector);
-
-
-	// Left Arm
+	// Velocities
 	UPROPERTY(EditAnywhere)
-	FVector leftShoulderVelocity;
+	FVector velocity[19];
 
-	UFUNCTION(BlueprintCallable)
-	void SetLeftShoulderVelocity(FVector);
-
-
+	// Rotations
 	UPROPERTY(EditAnywhere)
-	FVector leftUpperArmVelocity;
-
-	UFUNCTION(BlueprintCallable)
-	void SetleftUpperArmVelocity(FVector);
-
-
-	UPROPERTY(EditAnywhere)
-	FVector leftForeArmVelocity;
-
-	UFUNCTION(BlueprintCallable)
-	void SetLeftForeArmVelocity(FVector);
-
-
-	UPROPERTY(EditAnywhere)
-	FVector leftGlove;
-
-	UFUNCTION(BlueprintCallable)
-	void SetLeftGlove(FVector);
-
-
-
-	// Left Leg
-	UPROPERTY(EditAnywhere)
-	FVector leftUpperLegVelocity;
-
-	UFUNCTION(BlueprintCallable)
-	void SetLeftUpperLegVelocity(FVector);
-
+	FVector forwardVector[19];
 
 	UPROPERTY(EditAnywhere)
-	FVector leftLowerLegVelocity;
-
-	UFUNCTION(BlueprintCallable)
-	void SetLeftLowerLegVelocity(FVector);
-
+	FVector rightVector[19];
 
 	UPROPERTY(EditAnywhere)
-	FVector LeftFootVelocity;
+	FVector upVector[19];
 
 	UFUNCTION(BlueprintCallable)
-	void SetLowerTorsoVelocity(FVector);
-
-
-	// Right Arm
-	UPROPERTY(EditAnywhere)
-	FVector rightShoulderVelocity;
+	void SetPosition(const int index, const FVector _position);
+	
+	UFUNCTION(BlueprintCallable)
+	void SetVelocity(const int index, const FVector _velocity);
 
 	UFUNCTION(BlueprintCallable)
-	void SetRightShoulderVelocity(FVector);
-
-
-	UPROPERTY(EditAnywhere)
-	FVector rightUpperArmVelocity;
+	void SetDirectionalVectors(const int index, const FVector _forwardVector, const FVector _rightVector, const FVector _upVector);
 
 	UFUNCTION(BlueprintCallable)
-	void SetUpperArmVelocity(FVector);
-
-
-	UPROPERTY(EditAnywhere)
-	FVector rightForeArmVelocity;
-
-	UFUNCTION(BlueprintCallable)
-	void SetRightForeArmVelocity(FVector);
-
-
-	UPROPERTY(EditAnywhere)
-	FVector rightGloveVelocity;
-
-	UFUNCTION(BlueprintCallable)
-	void SetRightGloveVelocity(FVector);
-
-
-
-	// Right Leg
-	UPROPERTY(EditAnywhere)
-	FVector rightUpperLegVelocity;
-
-	UFUNCTION(BlueprintCallable)
-	void SetRightUpperLegVelocity(FVector);
-
-
-	UPROPERTY(EditAnywhere)
-	FVector rightLowerLegVelocity;
-
-	UFUNCTION(BlueprintCallable)
-	void SetRightLowerLegVelocity(FVector);
-
-
-	UPROPERTY(EditAnywhere)
-	FVector rightFoot;
-
-	UFUNCTION(BlueprintCallable)
-	void SetRightFootVelocity(FVector);
+	FVector GetForce(const int index);
 };
 
 
