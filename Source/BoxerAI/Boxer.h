@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -37,7 +35,7 @@ public:
 	// landing on your other bodyparts -20 points
 	// landing a punch on the opponent +500 points (* ForceFactor)
 
-	// 95 inputs
+	// 95 inputs (let's try with 38 inputs instead)
 	// L-R
 	//  0
 	// 123
@@ -69,13 +67,13 @@ public:
 	FVector velocity[19];
 
 	// Rotations
-	UPROPERTY(EditAnywhere)
+	// UPROPERTY(EditAnywhere)
 	FVector forwardVector[19];
 
-	UPROPERTY(EditAnywhere)
+	// UPROPERTY(EditAnywhere)
 	FVector rightVector[19];
 
-	UPROPERTY(EditAnywhere)
+	// UPROPERTY(EditAnywhere)
 	FVector upVector[19];
 
 	UFUNCTION(BlueprintCallable)
