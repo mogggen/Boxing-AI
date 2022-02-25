@@ -14,7 +14,8 @@ ABoxer::ABoxer()
 void ABoxer::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	randomizeWeights();
 }
 
 void ABoxer::SetPosition(const int index, const FVector _position)
@@ -27,16 +28,108 @@ void ABoxer::SetVelocity(const int index, const FVector _velocity)
 	velocity[index] = _velocity;
 }
 
-void ABoxer::SetDirectionalVectors(const int index, const FVector _forwardVector, const FVector _rightVector, const FVector _upVector)
-{
-	forwardVector[index] = _forwardVector;
-	rightVector[index] = _rightVector;
-	upVector[index] = _upVector;
-}
+// void ABoxer::SetOrientationalVectors(const int index, const FVector _forwardVector, const FVector _rightVector, const FVector _upVector)
+// {
+// 	forwardVector[index] = _forwardVector;
+// 	rightVector[index] = _rightVector;
+// 	upVector[index] = _upVector;
+// }
 
 FVector ABoxer::GetForce(const int index)
 {
 	return force[index];
+}
+
+void ABoxer::randomizeWeights()
+{
+	srand((unsigned int)time(NULL));
+
+	for (size_t i = 0; i < 12996; i++)
+	{
+		InputLayerToFirstHiddenLayerWeight[i] = 2 * (rand() / (float)RAND_MAX) - 1;
+		if (i < 6498)
+			FirstHiddenLayerToSecondHiddenLayerWeight[i] = 2 * (rand() / (float)RAND_MAX) - 1;
+		if (i < 3249)
+			SecondHiddenLayerToOutputWeight[i] = 2 * (rand() / (float)RAND_MAX) - 1;
+	}
+}
+
+
+
+void ABoxer::CalculateOutput()
+{
+	float inputs[114];
+	for (int i = 0; i < 114; i++)
+	{
+		inputs[i] = 0;
+	}
+
+	for (size_t i = 0; i < sizeof(inputs) / sizeof(*inputs); i+=6)
+	{
+		inputs[i] = position[i].X;
+		inputs[i+1] = position[i].Y;
+		inputs[i+2] = position[i].Z;
+		
+		inputs[19 + i] = velocity[i].X;
+		inputs[19 + i + 1] = velocity[i].Y;
+		inputs[19 + i + 2] = velocity[i].Z;
+	}
+	
+	float firstWeightSum[114];
+	for (size_t i = 0; i < 114; i++)
+	{
+		firstWeightSum[i] = 0;
+	}
+	
+
+	for (size_t i = 0; i < 2 / 3.0 * ((19 * 3 + 19 * 3) + 57); i++)
+	{
+		for (size_t j = 0; j < 2 / 3.0 * ((19 * 3 + 19 * 3) + 57); j++)
+		{
+			firstWeightSum[i] += inputs[j] * InputLayerToFirstHiddenLayerWeight[i*114+j];
+		}
+		if (firstWeightSum[i] < 0)
+			firstWeightSum[i] = 0;
+	}
+
+	float secondWeightSum[57];
+	for (size_t i = 0; i < 57; i++)
+	{
+		secondWeightSum[i] = 0;
+	}
+
+	for (size_t i = 0; i < 2 / 3.0 * ((19 * 3 + 19 * 3) + 57); i++)
+	{
+		for (size_t j = 0; j < 1 / 3.0 * ((19 * 3 + 19 * 3) + 57); j++)
+		{
+			secondWeightSum[i] += firstWeightSum[j] * FirstHiddenLayerToSecondHiddenLayerWeight[i*57+j];
+		}
+		if (secondWeightSum[i] < 0)
+			secondWeightSum[i] = 0;
+	}
+	
+	float finalWeightSum[57];
+	for (size_t i = 0; i < 57; i++)
+	{
+		finalWeightSum[i] = 0;
+	}
+	
+	for (size_t i = 0; i < 1 / 3.0 * ((19 * 3 + 19 * 3) + 57); i++)
+	{
+		for (size_t j = 0; j < 1 / 3.0 * ((19 * 3 + 19 * 3) + 57); j++)
+		{
+			finalWeightSum[i] += secondWeightSum[j] * SecondHiddenLayerToOutputWeight[i*57+j];
+		}
+		if (finalWeightSum[i] < 0)
+			finalWeightSum[i] = 0;
+	}
+	
+	for (size_t i = 0; i < 1 / 3.0 * ((19 * 3 + 19 * 3) + 57); i += 3)
+	{
+		force[i / 3].X = (2 * finalWeightSum[i] - 1) * 10000.f;
+		force[i / 3].Y = (2 * finalWeightSum[i+1] - 1) * 10000.f;
+		force[i / 3].Z = (2 * finalWeightSum[i+2] - 1) * 10000.f;
+	}
 }
 
 // Called every frame
@@ -44,10 +137,13 @@ void ABoxer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	CalculateOutput();
+
 	if (GEngine)
 	{
-		// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("the heads position in the X-axis is %f"), bodyPartsPosition[0].Y));
-		// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("the heads velocity in the X-axis is %f"), bodyPartsVelocity[0].Y));
+		for (size_t i = 0; i < 1.9; i++)
+		{
+		}
 	}
 }
 
