@@ -54,7 +54,10 @@ void ABoxer::randomizeWeights()
 	}
 }
 
-
+void ABoxer::LoadEpoch(const char* filename)
+{
+	// epoch = 
+}
 
 void ABoxer::CalculateOutput()
 {
@@ -130,6 +133,30 @@ void ABoxer::CalculateOutput()
 		force[i / 3].Y = finalWeightSum[i+1];
 		force[i / 3].Z = finalWeightSum[i+2];
 	}
+
+	std::ofstream savedweights;
+	// loadEpoch()
+	std::string epochString = "" + epoch;
+	savedweights.open(epochString.c_str());
+
+	for (size_t i = 0; i < sizeof(InputLayerToFirstHiddenLayerWeight) / sizeof(*InputLayerToFirstHiddenLayerWeight); i++)
+	{
+		savedweights << InputLayerToFirstHiddenLayerWeight[i] << "\n";
+	}
+	savedweights << "\n";
+	for (size_t i = 0; i < sizeof(FirstHiddenLayerToSecondHiddenLayerWeight) / sizeof(*FirstHiddenLayerToSecondHiddenLayerWeight); i++)
+	{
+		savedweights << FirstHiddenLayerToSecondHiddenLayerWeight[i] << "\n";
+	}
+
+	savedweights << "\n";
+
+	for (size_t i = 0; i < sizeof(SecondHiddenLayerToOutputWeight) / sizeof(*SecondHiddenLayerToOutputWeight); i++)
+	{
+		savedweights << SecondHiddenLayerToOutputWeight[i] << "\n";
+	}
+
+	savedweights << std::endl;
 }
 
 // Called every frame
@@ -141,9 +168,7 @@ void ABoxer::Tick(float DeltaTime)
 
 	if (GEngine)
 	{
-		for (size_t i = 0; i < 1.9; i++)
-		{
-		}
+		
 	}
 }
 

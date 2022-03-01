@@ -15,6 +15,7 @@ public:
 	// Sets default values for this actor's properties
 	ABoxer();
 
+	int epoch = 0;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -100,6 +101,8 @@ public:
 
 	// the big mama
 	void CalculateOutput();
+
+	void LoadEpoch(const char *filename);
 
 	UFUNCTION(BlueprintCallable)
 	FVector GetForce(const int index);
