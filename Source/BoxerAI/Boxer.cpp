@@ -126,9 +126,9 @@ void ABoxer::CalculateOutput()
 	
 	for (size_t i = 0; i < 1 / 3.0 * ((19 * 3 + 19 * 3) + 57); i += 3)
 	{
-		force[i / 3].X = (2 * finalWeightSum[i] - 1) * 10000.f;
-		force[i / 3].Y = (2 * finalWeightSum[i+1] - 1) * 10000.f;
-		force[i / 3].Z = (2 * finalWeightSum[i+2] - 1) * 10000.f;
+		force[i / 3].X = finalWeightSum[i];
+		force[i / 3].Y = finalWeightSum[i+1];
+		force[i / 3].Z = finalWeightSum[i+2];
 	}
 }
 
