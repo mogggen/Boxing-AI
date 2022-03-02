@@ -135,7 +135,7 @@ void ABoxer::CalculateOutput()
 	}
 
 	std::ofstream savedweights;
-	// loadEpoch()
+	// loadEpoch();
 	std::string epochString = "" + epoch;
 	savedweights.open(epochString.c_str());
 

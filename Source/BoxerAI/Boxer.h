@@ -29,31 +29,38 @@ public:
 	// AI with higher scores are proportionally more likely to survive
 	// The NN will mutate randomly in search of favorable mutations
 	
-	// landing on your head -40 points
-	// landing on your Shoulder -80 points
-	// landing on your gloves -30 points
-	// landing on your other bodyparts -20 points
+	// points for landing on your:
+	// Head 		-40
+	// Shoulder 	-80
+	// Gloves 		-30
+	// Torso		-20
+	// Hip			-10
+	// Arms			-30
+	// Legs			-80
+	// feets		+50 (* centimetres from the center of the ring)
+	
+	// punch on
+	// the opponent	+500 (* ForceFactor)
 
 	// +1p for every second without collision
-	// landing on feet +50 p (+ cm from the center of the ring)
-	// landing a punch on the opponent +500 points (* ForceFactor)
+
 
 	// 95 inputs (let's try with 38 inputs instead, position and velocity)
-	// L-R
-	//  0
-	// 123
-	// 456
-	// 789
-	// ABC
-	// D E
-	// F G
-	// H I
+	// L - R
+	//   0
+	// 1 2 3
+	// 4 5 6
+	// 7 8 9
+	// A B C
+	//  D E
+	//  F G
+	//  H I
 
-	// First Layer
-	// hidden neurons 2 / 3 * (114 + 57) = 114
+	// First hidden Layer neurons
+	//  2 / 3 * (114 + 57) = 114
 
-	// Second Layer
-	// hidden neurons 1 / 3 * (114 + 57) = 57
+	// Second hidden Layer neurons
+	//  1 / 3 * (114 + 57) = 57
 	
 	// 57 outputs (from -1 to 1) * multiplied to apply a force of -1000 to 1000
 	
