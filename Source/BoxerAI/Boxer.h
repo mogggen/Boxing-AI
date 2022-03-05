@@ -3,9 +3,15 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include <ctime>
+#include <string>
 #include <fstream>
+// #define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+// #include <ShellAPI.h>
+// #include <KnownFolders.h>
+// #include <ShlObj.h>
+// #include <comdef.h>
 #include "Boxer.generated.h"
-
 UCLASS()
 class BOXERAI_API ABoxer : public AActor
 {
@@ -109,10 +115,14 @@ public:
 	// the big mama
 	void CalculateOutput();
 
-	void LoadEpoch(const char *filename);
+	void SaveProgress(const char *filename);
+
+	bool LoadProgress(const char *filename);
 
 	UFUNCTION(BlueprintCallable)
 	FVector GetForce(const int index);
 };
+
+
 
 
