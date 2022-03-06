@@ -48,7 +48,9 @@ public:
 	// punch on
 	// the opponent	+500 (* ForceFactor)
 
-	// +1p for every second without collision
+	// +1p for every second without collision with floor
+	// standing somewhat up right is also rewarding
+	//
 
 
 	// 95 inputs (let's try with 38 inputs instead, position and velocity)
