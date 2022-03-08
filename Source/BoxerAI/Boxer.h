@@ -6,7 +6,7 @@
 #include <string>
 #include <fstream>
 // #define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
+//#include <Windows.h>
 // #include <ShellAPI.h>
 // #include <KnownFolders.h>
 // #include <ShlObj.h>
@@ -112,14 +112,14 @@ public:
 	// UFUNCTION(BlueprintCallable)
 	// void SetOrientationalVectors(const int index, const FVector _forwardVector, const FVector _rightVector, const FVector _upVector);
 
-	void randomizeWeights();
+	void RandomizeWeights();
 
 	// the big mama
 	void CalculateOutput();
 
 	void SaveProgress(const char *filename);
 
-	bool LoadProgress(const char *filename);
+	void LoadProgress(const char *filename);
 
 	UFUNCTION(BlueprintCallable)
 	FVector GetForce(const int index);

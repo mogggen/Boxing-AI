@@ -16,8 +16,11 @@ ABoxer::ABoxer()
 void ABoxer::BeginPlay()
 {
 	Super::BeginPlay();
-	LoadProgress("test.txt");
-	//randomizeWeights();
+
+	RandomizeWeights();
+	// srand((unsigned int)time(NULL));
+	// LoadProgress("test.txt");
+	
 }
 
 void ABoxer::SetPosition(const int index, const FVector _position)
@@ -42,10 +45,8 @@ FVector ABoxer::GetForce(const int index)
 	return force[index];
 }
 
-void ABoxer::randomizeWeights()
+void ABoxer::RandomizeWeights()
 {
-	srand((unsigned int)time(NULL));
-
 	for (size_t i = 0; i < 12996; i++)
 	{
 		InputLayerToFirstHiddenLayerWeight[i] = 2 * (rand() / (float)RAND_MAX) - 1;
@@ -58,36 +59,36 @@ void ABoxer::randomizeWeights()
 
 void ABoxer::SaveProgress(const char *filename)
 {
-	char path[MAX_PATH];
-	GetFullPathName(filename, MAX_PATH, path, nullptr);
-	char buf[(12996 + 6498 + 3249) * 11];
-	FILE *file;
-	std::ifstream saveweights;
-	fopen_s(&file, fullPath, "w"); // weights
+	// char path[MAX_PATH];
+	// GetFullPathName(filename, MAX_PATH, path, nullptr);
+	// char buf[(12996 + 6498 + 3249) * 11];
+	FILE *file = nullptr;
+	std::ofstream saveweights;
+	// fopen_s(&file, fullPath, "w"); // weights
 
-	if (file)
+	if (file != nullptr)
 	{
-		epoch >> saveweights;
-		for (size_t i = 0; i < 12996; i++)
-		{
-			InputLayerToFirstHiddenLayerWeight[i] >> saveweights;
-		}
-		"\n" >> saveweights;
+		// epoch >> saveweights;
+		// for (size_t i = 0; i < 12996; i++)
+		// {
+		// 	saveweights << InputLayerToFirstHiddenLayerWeight[i] << "\n";
+		// }
+		// saveweights << "\n";
 
-		for (size_t i = 0; i < 6498; i++)
-		{
-			FirstHiddenLayerToSecondHiddenLayerWeight[i] >> saveweights;
-		}
-		"\n" >> saveweights;
+		// for (size_t i = 0; i < 6498; i++)
+		// {
+		// 	saveweights << FirstHiddenLayerToSecondHiddenLayerWeight[i] << "\n";
+		// }
+		// saveweights << "\n";
 
-		for (size_t i = 0; i < 3249; i++)
-		{
-			SecondHiddenLayerToOutputWeight[i] >> saveweights;
-		}
+		// for (size_t i = 0; i < 3249; i++)
+		// {
+		// 	saveweights << SecondHiddenLayerToOutputWeight[i] << "\n";
+		// }
 	}
 }
 
-bool ABoxer::LoadProgress(const char *filename)
+void ABoxer::LoadProgress(const char *filename)
 {
 	// line 1: epoch
 	// epoch =
@@ -132,53 +133,57 @@ bool ABoxer::LoadProgress(const char *filename)
 	// const char* fullPath = localPath.c_str();
 
 	// attempt 6 (What! is it this easy :[ )
-	char path[MAX_PATH];
-	GetFullPathName(filename, MAX_PATH, path, nullptr);
+	// char path[MAX_PATH];
+	// GetFullPathName(filename, MAX_PATH, path, nullptr);
 
 	// update: attempt 5 came out in Chinease, because it was UTF8, solved it with UTF8_TO_TCHAR
 	
 	// if (GEngine)
 	// 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::White, FString::Printf(TEXT("path %s"), UTF8_TO_TCHAR(angest)));
 
-	char buf[(12996 + 6498 + 3249) * 11];
-	FILE *file;
-	fopen_s(&file, fullPath, "r"); // weights
-	if (file)
+	// char buf[(12996 + 6498 + 3249) * 11];
+	FILE *file = nullptr;
+	// fopen_s(&file, fullPath, "r"); // weights
+	if (file != nullptr)
 	{
-		int layer = 0;
-		size_t i = 0;
-		while (fgets(buf, sizeof(buf), file))
-		{
-			// reads one word at a time, seperate by a newline, and places it at buf[0] with a trailing '\0'
+		// int layer = 0;
+		// size_t i = 0;
+		// while (fgets(buf, sizeof(buf), file))
+		// {
+		// 	// reads one word at a time, seperate by a newline, and places it at buf[0] with a trailing '\0'
 
-			if (buf[i] == '\n' && buf[i+1] == '\0')
-			{
-				layer++;
-				i = 0;
-				continue;
-			}
+		// 	if (buf[i] == '\n' && buf[i+1] == '\0')
+		// 	{
+		// 		layer++;
+		// 		i = 0;
+		// 		continue;
+		// 	}
 
-			std::string word = buf;
-			float w = std::stof(word);
+		// 	std::string word = buf;
+		// 	float w = std::stof(word);
 
-			switch (layer)
-			{
-			case 0:
-				InputLayerToFirstHiddenLayerWeight[i++] = w;
-				break;
-			case 1:
-				FirstHiddenLayerToSecondHiddenLayerWeight[i++] = w;
-				break;
-			case 2:
-				SecondHiddenLayerToOutputWeight[i++] = w;
-				break;
+		// 	switch (layer)
+		// 	{
+		// 	case 0:
+		// 		InputLayerToFirstHiddenLayerWeight[i++] = w;
+		// 		break;
+		// 	case 1:
+		// 		FirstHiddenLayerToSecondHiddenLayerWeight[i++] = w;
+		// 		break;
+		// 	case 2:
+		// 		SecondHiddenLayerToOutputWeight[i++] = w;
+		// 		break;
 
-			default:
-				// no thank you
-				break;
-			}
-		}
-		free(buf);
+		// 	default:
+		// 		// no thank you
+		// 		break;
+		// 	}
+		// }
+		// free(buf);
+	}
+	else
+	{
+		RandomizeWeights();
 	}
 }
 
@@ -281,9 +286,11 @@ void ABoxer::CalculateOutput()
 // Called every frame
 void ABoxer::Tick(float DeltaTime)
 {
+	// Calculate the output forces applied in the next physics step
+	CalculateOutput();
+	
 	Super::Tick(DeltaTime);
 
-	CalculateOutput();
 
 	if (GEngine)
 	{
