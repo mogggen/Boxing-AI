@@ -117,9 +117,11 @@ public:
 	// the big mama
 	void CalculateOutput();
 
-	void SaveProgress(const char *filename);
+	UFUNCTION(BlueprintCallable)
+	void SaveWeights(const int agentId);
 
-	void LoadProgress(const char *filename);
+	UFUNCTION(BlueprintCallable)
+	void LoadWeights(const int agentId);
 
 	UFUNCTION(BlueprintCallable)
 	FVector GetForce(const int index);

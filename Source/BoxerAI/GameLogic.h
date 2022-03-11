@@ -4,7 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include <limits>
 #include "Boxer.h"
+#include "Misc/Paths.h"
+#include "Misc/CString.h"
+#include "Misc/FileHelper.h"
+#include "Containers/UnrealString.h"
 #include "GameLogic.generated.h"
 
 UCLASS()
@@ -16,10 +21,8 @@ public:
 	// Sets default values for this actor's properties
 	AGameLogic();
 	
-	UPROPERTY(EditAnywhere)
-	unsigned int timePerRound = 20;
-
-	float timeElapsedThisRound = 0.f;
+	int agentId = 0;
+	FFileHelper FileHelper;
 
 protected:
 	// Called when the game starts or when spawned
@@ -31,11 +34,18 @@ public:
 
 	void StartBatch(const unsigned int batchSize);
 
-	UFUNCTION(BlueprintCallable)
-	void StartMatch();
 
 	UFUNCTION(BlueprintCallable)
-	void EndMatch();
+	int GetAgentId();
+	
+	UFUNCTION(BlueprintCallable)
+	void SetAgentId(const int agentId);
 
-	void NaturalSelection(const float mortality=.5f, const float mutability=0.01f);
+	UFUNCTION(BlueprintCallable)
+	void SaveScore(const float score);
+
+	FString LoadScore();
+
+	UFUNCTION(BlueprintCallable)
+	void NaturalSelection(const float mortality=.5f, const float propability = 0.01, const float mutability=0.01f);
 };

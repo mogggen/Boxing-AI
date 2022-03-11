@@ -17,10 +17,7 @@ void ABoxer::BeginPlay()
 {
 	Super::BeginPlay();
 
-	RandomizeWeights();
-	// srand((unsigned int)time(NULL));
-	// LoadProgress("test.txt");
-	
+	srand((unsigned int)time(NULL));
 }
 
 void ABoxer::SetPosition(const int index, const FVector _position)
@@ -45,6 +42,7 @@ FVector ABoxer::GetForce(const int index)
 	return force[index];
 }
 
+
 void ABoxer::RandomizeWeights()
 {
 	for (size_t i = 0; i < 12996; i++)
@@ -57,132 +55,112 @@ void ABoxer::RandomizeWeights()
 	}
 }
 
-void ABoxer::SaveProgress(const char *filename)
+
+void ABoxer::SaveWeights(const int agentId)
 {
-	// char path[MAX_PATH];
-	// GetFullPathName(filename, MAX_PATH, path, nullptr);
-	// char buf[(12996 + 6498 + 3249) * 11];
-	FILE *file = nullptr;
-	std::ofstream saveweights;
-	// fopen_s(&file, fullPath, "w"); // weights
-
-	if (file != nullptr)
+	size_t i;
+	// Save inputs to first hidden layer weights
+	FString path = FPaths::ProjectDir() + TEXT("\\Weights\\") + FString::FromInt(agentId) + TEXT(".ih1");
+	FString content = TEXT("");
+	
+	FFileHelper::SaveStringToFile(content, *path, FFileHelper::EEncodingOptions::AutoDetect, (uint32_t)0u);
+	for (i = 0; i < sizeof(InputLayerToFirstHiddenLayerWeight) / sizeof(InputLayerToFirstHiddenLayerWeight[0]) - 1; i++)
 	{
-		// epoch >> saveweights;
-		// for (size_t i = 0; i < 12996; i++)
-		// {
-		// 	saveweights << InputLayerToFirstHiddenLayerWeight[i] << "\n";
-		// }
-		// saveweights << "\n";
-
-		// for (size_t i = 0; i < 6498; i++)
-		// {
-		// 	saveweights << FirstHiddenLayerToSecondHiddenLayerWeight[i] << "\n";
-		// }
-		// saveweights << "\n";
-
-		// for (size_t i = 0; i < 3249; i++)
-		// {
-		// 	saveweights << SecondHiddenLayerToOutputWeight[i] << "\n";
-		// }
+		content += FString::SanitizeFloat(InputLayerToFirstHiddenLayerWeight[i]) + LINE_TERMINATOR;
 	}
+	content += FString::SanitizeFloat(InputLayerToFirstHiddenLayerWeight[++i]);
+
+
+	// Save first to second hidden layer weights
+	path = FPaths::ProjectDir() + TEXT("\\Weights\\") + FString::FromInt(agentId) + TEXT(".h1h2");
+	content = TEXT("");
+	
+	FFileHelper::SaveStringToFile(content, *path, FFileHelper::EEncodingOptions::AutoDetect, (uint32_t)0u);
+	for (i = 0; i < sizeof(FirstHiddenLayerToSecondHiddenLayerWeight) / sizeof(FirstHiddenLayerToSecondHiddenLayerWeight[0]) - 1; i++)
+	{
+		content += FString::SanitizeFloat(FirstHiddenLayerToSecondHiddenLayerWeight[i]) + LINE_TERMINATOR;
+	}
+	content += FString::SanitizeFloat(FirstHiddenLayerToSecondHiddenLayerWeight[++i]);
+
+
+	// Save second hidden to output layer weights
+	path = FPaths::ProjectDir() + TEXT("\\Weights\\") + FString::FromInt(agentId) + TEXT(".h2o");
+	content = TEXT("");
+	
+	FFileHelper::SaveStringToFile(content, *path, FFileHelper::EEncodingOptions::AutoDetect, (uint32_t)0u);
+	for (i = 0; i < sizeof(SecondHiddenLayerToOutputWeight) / sizeof(SecondHiddenLayerToOutputWeight[0]) - 1; i++)
+	{
+		content += FString::SanitizeFloat(SecondHiddenLayerToOutputWeight[i]) + LINE_TERMINATOR;
+	}
+	content += FString::SanitizeFloat(SecondHiddenLayerToOutputWeight[++i]);
 }
 
-void ABoxer::LoadProgress(const char *filename)
+
+
+void ABoxer::LoadWeights(const int agentId)
 {
-	// line 1: epoch
-	// epoch =
-	// then: InputLayerToFirstHiddenLayerWeight (sep=" ")
-	// then: FirstHiddenLayerToSecondHiddenLayerWeight
-	// then: SecondHiddenLayerToOutputWeight
-
-	// attempt 1
-	//FString projectPath = FPaths::ProjectDir();
-	//std::string fullPath = std::string(TCHAR_TO_UTF8(*projectPath)) + "Source/BoxerAI/" + filename;
-	// const char *path = fullPath.c_str();
-	// char *userPath = nullptr;
-	
-	// attempt 2
-	// size_t sz = 0;
-	// std::string path;
-	// if (_dupenv_s(&userPath, &sz, "USER") == 0 && userPath != nullptr)
-	// {
-	// 	path = userPath;
-	// 	free(userPath);
-	// 	path += "Documents\\Unreal Projects\\Boxing-AI\\Source\\BoxerAI\\";
-	// 	path += filename;
-	// }
-
-	// attempt 3
-	// CoInitialize(NULL);
-    // TCHAR* path = 0;
-    // SHGetKnownFolderPath(FOLDERID_Documents, KF_FLAG_SIMPLE_IDLIST, NULL, &path);
-	// _bstr_t b(path);
-	// const char* OMG = b;
-	// std::string mobOfTheDeadGameplay = OMG;
-	// mobOfTheDeadGameplay += "Documents\\Unreal Projects\\Boxing-AI\\Source\\BoxerAI\\";
-	// mobOfTheDeadGameplay += filename;
-    // CoTaskMemFree(path);
-
-	// attempt 4
-	// system("echo %cd% > pathForUE4.txt");
-
-	// attempt 5
-	// std::string localPath = ("C:/Users/melon/Documents/Unreal Projects/Boxing-AI/Source/BoxerAI/");
-	// localPath += filename;
-	// const char* fullPath = localPath.c_str();
-
-	// attempt 6 (What! is it this easy :[ )
-	// char path[MAX_PATH];
-	// GetFullPathName(filename, MAX_PATH, path, nullptr);
-
-	// update: attempt 5 came out in Chinease, because it was UTF8, solved it with UTF8_TO_TCHAR
-	
-	// if (GEngine)
-	// 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::White, FString::Printf(TEXT("path %s"), UTF8_TO_TCHAR(angest)));
-
-	// char buf[(12996 + 6498 + 3249) * 11];
-	FILE *file = nullptr;
-	// fopen_s(&file, fullPath, "r"); // weights
-	if (file != nullptr)
+	size_t i = 0;
+	// Load inputs to first hidden layer weights
+	FString path = FPaths::ProjectDir() + TEXT("\\Weights\\") + FString::FromInt(agentId) + TEXT(".ih1");
+	FString content;
+	if (FPaths::FileExists(*path))
 	{
-		// int layer = 0;
-		// size_t i = 0;
-		// while (fgets(buf, sizeof(buf), file))
-		// {
-		// 	// reads one word at a time, seperate by a newline, and places it at buf[0] with a trailing '\0'
-
-		// 	if (buf[i] == '\n' && buf[i+1] == '\0')
-		// 	{
-		// 		layer++;
-		// 		i = 0;
-		// 		continue;
-		// 	}
-
-		// 	std::string word = buf;
-		// 	float w = std::stof(word);
-
-		// 	switch (layer)
-		// 	{
-		// 	case 0:
-		// 		InputLayerToFirstHiddenLayerWeight[i++] = w;
-		// 		break;
-		// 	case 1:
-		// 		FirstHiddenLayerToSecondHiddenLayerWeight[i++] = w;
-		// 		break;
-		// 	case 2:
-		// 		SecondHiddenLayerToOutputWeight[i++] = w;
-		// 		break;
-
-		// 	default:
-		// 		// no thank you
-		// 		break;
-		// 	}
-		// }
-		// free(buf);
+		FFileHelper::LoadFileToString(content, *path, FFileHelper::EHashOptions::None, (uint32_t)0u);
+		for (i = 0; i < sizeof(InputLayerToFirstHiddenLayerWeight) / sizeof(InputLayerToFirstHiddenLayerWeight[0]) - 1; i++)
+		{
+			FString strWeight;
+			content.Split(LINE_TERMINATOR, &strWeight, &content);
+			float weight = FCString::Atof(*strWeight);
+			InputLayerToFirstHiddenLayerWeight[i] = weight;
+		}
+		InputLayerToFirstHiddenLayerWeight[++i] = FCString::Atof(*content);
 	}
 	else
 	{
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 1.5, FColor::Green, TEXT("0-1"));
+		RandomizeWeights();
+	}
+
+	// Load weights from first to second hidden layer weights
+	path = FPaths::ProjectDir() + TEXT("\\Weights\\") + FString::FromInt(agentId) + TEXT(".h1h2");
+	if (FPaths::FileExists(*path))
+	{
+		FFileHelper::LoadFileToString(content, *path, FFileHelper::EHashOptions::None, (uint32_t)0u);
+		for (i = 0; i < sizeof(FirstHiddenLayerToSecondHiddenLayerWeight) / sizeof(FirstHiddenLayerToSecondHiddenLayerWeight[0]) - 1; i++)
+		{
+			FString strWeight;
+			content.Split(LINE_TERMINATOR, &strWeight, &content);
+			float weight = FCString::Atof(*strWeight);
+			FirstHiddenLayerToSecondHiddenLayerWeight[i] = weight;
+		}
+		FirstHiddenLayerToSecondHiddenLayerWeight[++i] = FCString::Atof(*content);
+	}
+	else
+	{
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 1.5, FColor::Green, TEXT("1-2"));
+		RandomizeWeights();
+	}
+
+	// Load weights from second hidden to output layer weights
+	path = FPaths::ProjectDir() + TEXT("\\Weights\\") + FString::FromInt(agentId) + TEXT(".h2o");
+	if (FPaths::FileExists(*path))
+	{
+		FFileHelper::LoadFileToString(content, *path, FFileHelper::EHashOptions::None, (uint32_t)0u);
+		for (i = 0; i < sizeof(SecondHiddenLayerToOutputWeight) / sizeof(SecondHiddenLayerToOutputWeight[0]) - 1; i++)
+		{
+			FString strWeight;
+			content.Split(LINE_TERMINATOR, &strWeight, &content);
+			float weight = FCString::Atof(*strWeight);
+			SecondHiddenLayerToOutputWeight[i] = weight;
+		}
+		SecondHiddenLayerToOutputWeight[++i] = FCString::Atof(*content);
+	}
+	else
+	{
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 1.5, FColor::Green, TEXT("2-3"));
 		RandomizeWeights();
 	}
 }
@@ -254,33 +232,6 @@ void ABoxer::CalculateOutput()
 		force[i / 3].Y = finalWeightSum[i + 1];
 		force[i / 3].Z = finalWeightSum[i + 2];
 	}
-
-	// if (!LoadProgress())
-	// {
-	// 	std::ofstream savedweights;
-	// 	std::string epochString = "" + epoch;
-	// 	savedweights.open(epochString.c_str());
-	
-
-	// 	for (size_t i = 0; i < sizeof(InputLayerToFirstHiddenLayerWeight) / sizeof(*InputLayerToFirstHiddenLayerWeight); i++)
-	// 	{
-	// 		savedweights << InputLayerToFirstHiddenLayerWeight[i] << "\n";
-	// 	}
-	// 	savedweights << "\n";
-	// 	for (size_t i = 0; i < sizeof(FirstHiddenLayerToSecondHiddenLayerWeight) / sizeof(*FirstHiddenLayerToSecondHiddenLayerWeight); i++)
-	// 	{
-	// 		savedweights << FirstHiddenLayerToSecondHiddenLayerWeight[i] << "\n";
-	// 	}
-
-	// 	savedweights << "\n";
-
-	// 	for (size_t i = 0; i < sizeof(SecondHiddenLayerToOutputWeight) / sizeof(*SecondHiddenLayerToOutputWeight); i++)
-	// 	{
-	// 		savedweights << SecondHiddenLayerToOutputWeight[i] << "\n";
-	// 	}
-
-	// 	savedweights << std::endl;
-	// }
 }
 
 // Called every frame
