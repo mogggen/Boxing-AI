@@ -7,6 +7,7 @@
 #include <limits>
 #include "Boxer.h"
 #include "Misc/Paths.h"
+#include "Math/UnrealMathUtility.h"
 #include "Misc/CString.h"
 #include "Misc/FileHelper.h"
 #include "Containers/UnrealString.h"

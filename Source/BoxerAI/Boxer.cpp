@@ -168,10 +168,6 @@ void ABoxer::LoadWeights(const int agentId)
 void ABoxer::CalculateOutput()
 {
 	float inputs[114];
-	for (int i = 0; i < 114; i++)
-	{
-		inputs[i] = 0;
-	}
 
 	for (size_t i = 0; i < sizeof(inputs) / sizeof(*inputs); i += 6)
 	{
