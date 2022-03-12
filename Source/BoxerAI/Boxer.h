@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Math/UnrealMathUtility.h"
 #include <ctime>
 #include <string>
 #include <fstream>

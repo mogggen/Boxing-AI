@@ -18,15 +18,6 @@ void AGameLogic::BeginPlay()
 	
 }
 
-void AGameLogic::StartBatch(const unsigned int batchSize)
-{
-	for (size_t i = 0; i < batchSize; i++)
-	{
-		// StartMatch();
-	}
-	
-}
-
 int AGameLogic::GetAgentId()
 {
 	return agentId;
@@ -37,6 +28,26 @@ void AGameLogic::SetAgentId(const int _agentId)
 	agentId = _agentId;
 }
 
+ABoxer* AGameLogic::GetBoxer()
+{
+	return boxer;
+}
+
+ABoxer* AGameLogic::GetBoxer2()
+{
+	return boxer2;
+}
+
+void AGameLogic::SetBoxer(ABoxer* _boxer)
+{
+	boxer = _boxer;
+}
+
+void AGameLogic::SetBoxer2(ABoxer* _boxer2)
+{
+	boxer2 = _boxer2;
+}
+
 void AGameLogic::SaveScore(const float _score)
 {
 	FString path = FPaths::ProjectDir() + TEXT("\\Weights\\") + FString::FromInt(agentId) + TEXT(".score");
@@ -44,12 +55,20 @@ void AGameLogic::SaveScore(const float _score)
 	FFileHelper::SaveStringToFile(content, *path, FFileHelper::EEncodingOptions::AutoDetect);
 }
 
-FString AGameLogic::LoadScore()
+bool AGameLogic::LoadScore(float& _score)
 {
 	FString path = FPaths::ProjectDir() + TEXT("\\Weights\\") + FString::FromInt(agentId) + TEXT(".score");
 	FString content;
-	FFileHelper::SaveStringToFile(content, *path, FFileHelper::EHashOptions::None, (uint32_t)0u);
-	return content;
+	if (FPaths::FileExists(*path))
+	{
+		FFileHelper::SaveStringToFile(content, *path, FFileHelper::EEncodingOptions::AutoDetect, (uint32_t)0u);
+		_score = FCString::Atof(*content);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 void AGameLogic::NaturalSelection(const float mortality, const float propability, const float mutability)
@@ -64,7 +83,7 @@ void AGameLogic::NaturalSelection(const float mortality, const float propability
 	// find min and max values
 	for (agentId = 0; agentId < 40; agentId++)
 	{
-		score[agentId] = FCString::Atof(LoadScore());
+		if (LoadScore(score[agentId]))
 		
 		if (min > score[agentId])
 		{
@@ -89,7 +108,7 @@ void AGameLogic::NaturalSelection(const float mortality, const float propability
 	float deathPropability[40];
 	float deathSum = 0.f;
 	float runningDeath = 0.f;
-	bool hasDied[39];
+	bool hasDied[40];
 	
 	for (size_t i = 0; i < 40; i++)
 	{
@@ -102,16 +121,16 @@ void AGameLogic::NaturalSelection(const float mortality, const float propability
 	{
 		// pick a boxer whom will have their weights overwritten
 		size_t j;
-		theNotChosen = FMath::RandRange(0, deathPropability)
+		theNotChosen = FMath::RandRange(0.f, deathSum);
 		for (j = 0; ; j++)
 		{
-			if (runningDeath >= notNotChosen)
+			if (runningDeath >= theNotChosen)
 			{
 				if (hasDied[j])
 				{
 					j = 0;
 					runningDeath = 0.f;
-					theNotChosen = FMath::RandRange(0, deathPropability);
+					theNotChosen = FMath::RandRange(0.f, deathSum);
 				}
 				else
 				{
@@ -137,32 +156,21 @@ void AGameLogic::NaturalSelection(const float mortality, const float propability
 		}
 	}
 
+	// mutate weights for all boxers by a factor mutability propabity times of the set (except king)
 	for (agentId = 0; agentId < 40; agentId++)
 	{
-		score[agentId] = FCString::Atof(LoadScore());
+		if (score[agentId] == max) continue;
+		boxer->LoadWeights(agentId);
 		for (size_t i = 0; i < 12996; i++)
 		{
-			InputLayerToFirstHiddenLayerWeight[i] = 2 * (rand() / (float)RAND_MAX) - 1;
+			boxer->InputLayerToFirstHiddenLayerWeight[i] *= FMath::RandRange(-mutability, mutability);
 			if (i < 6498)
-				FirstHiddenLayerToSecondHiddenLayerWeight[i] = 2 * (rand() / (float)RAND_MAX) - 1;
+				boxer->FirstHiddenLayerToSecondHiddenLayerWeight[i] *= FMath::RandRange(-mutability, mutability);
 			if (i < 3249)
-				SecondHiddenLayerToOutputWeight[i] = 2 * (rand() / (float)RAND_MAX) - 1;
+				boxer->SecondHiddenLayerToOutputWeight[i] *= FMath::RandRange(-mutability, mutability);
 		}
-
-		for (i = 0; i < sizeof(SecondHiddenLayerToOutputWeight) / sizeof(SecondHiddenLayerToOutputWeight[0]) - 1; i++)
-		{
-			FString strWeight;
-			content.Split(LINE_TERMINATOR, &strWeight, &content);
-			float weight = FCString::Atof(*strWeight);
-			SecondHiddenLayerToOutputWeight[i] = weight;
-		}
+		boxer->SaveWeights(agentId);
 	}
 	agentId = 0;
-}
-
-// Called every frame
-void AGameLogic::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
 }
 

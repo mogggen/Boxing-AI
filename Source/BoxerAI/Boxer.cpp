@@ -47,11 +47,11 @@ void ABoxer::RandomizeWeights()
 {
 	for (size_t i = 0; i < 12996; i++)
 	{
-		InputLayerToFirstHiddenLayerWeight[i] = 2 * (rand() / (float)RAND_MAX) - 1;
+		InputLayerToFirstHiddenLayerWeight[i] = FMath::RandRange(-1.f, 1.f);
 		if (i < 6498)
-			FirstHiddenLayerToSecondHiddenLayerWeight[i] = 2 * (rand() / (float)RAND_MAX) - 1;
+			FirstHiddenLayerToSecondHiddenLayerWeight[i] = FMath::RandRange(-1.f, 1.f);
 		if (i < 3249)
-			SecondHiddenLayerToOutputWeight[i] = 2 * (rand() / (float)RAND_MAX) - 1;
+			SecondHiddenLayerToOutputWeight[i] = FMath::RandRange(-1.f, 1.f);
 	}
 }
 
@@ -64,7 +64,7 @@ void ABoxer::SaveWeights(const int agentId)
 	FString content = TEXT("");
 	
 	FFileHelper::SaveStringToFile(content, *path, FFileHelper::EEncodingOptions::AutoDetect, (uint32_t)0u);
-	for (i = 0; i < sizeof(InputLayerToFirstHiddenLayerWeight) / sizeof(InputLayerToFirstHiddenLayerWeight[0]) - 1; i++)
+	for (i = 0; i < sizeof(InputLayerToFirstHiddenLayerWeight) / sizeof(*InputLayerToFirstHiddenLayerWeight) - 1; i++)
 	{
 		content += FString::SanitizeFloat(InputLayerToFirstHiddenLayerWeight[i]) + LINE_TERMINATOR;
 	}
@@ -76,7 +76,7 @@ void ABoxer::SaveWeights(const int agentId)
 	content = TEXT("");
 	
 	FFileHelper::SaveStringToFile(content, *path, FFileHelper::EEncodingOptions::AutoDetect, (uint32_t)0u);
-	for (i = 0; i < sizeof(FirstHiddenLayerToSecondHiddenLayerWeight) / sizeof(FirstHiddenLayerToSecondHiddenLayerWeight[0]) - 1; i++)
+	for (i = 0; i < sizeof(FirstHiddenLayerToSecondHiddenLayerWeight) / sizeof(*FirstHiddenLayerToSecondHiddenLayerWeight) - 1; i++)
 	{
 		content += FString::SanitizeFloat(FirstHiddenLayerToSecondHiddenLayerWeight[i]) + LINE_TERMINATOR;
 	}
@@ -88,7 +88,7 @@ void ABoxer::SaveWeights(const int agentId)
 	content = TEXT("");
 	
 	FFileHelper::SaveStringToFile(content, *path, FFileHelper::EEncodingOptions::AutoDetect, (uint32_t)0u);
-	for (i = 0; i < sizeof(SecondHiddenLayerToOutputWeight) / sizeof(SecondHiddenLayerToOutputWeight[0]) - 1; i++)
+	for (i = 0; i < sizeof(SecondHiddenLayerToOutputWeight) / sizeof(*SecondHiddenLayerToOutputWeight) - 1; i++)
 	{
 		content += FString::SanitizeFloat(SecondHiddenLayerToOutputWeight[i]) + LINE_TERMINATOR;
 	}
@@ -106,7 +106,7 @@ void ABoxer::LoadWeights(const int agentId)
 	if (FPaths::FileExists(*path))
 	{
 		FFileHelper::LoadFileToString(content, *path, FFileHelper::EHashOptions::None, (uint32_t)0u);
-		for (i = 0; i < sizeof(InputLayerToFirstHiddenLayerWeight) / sizeof(InputLayerToFirstHiddenLayerWeight[0]) - 1; i++)
+		for (i = 0; i < sizeof(InputLayerToFirstHiddenLayerWeight) / sizeof(*InputLayerToFirstHiddenLayerWeight) - 1; i++)
 		{
 			FString strWeight;
 			content.Split(LINE_TERMINATOR, &strWeight, &content);
@@ -127,7 +127,7 @@ void ABoxer::LoadWeights(const int agentId)
 	if (FPaths::FileExists(*path))
 	{
 		FFileHelper::LoadFileToString(content, *path, FFileHelper::EHashOptions::None, (uint32_t)0u);
-		for (i = 0; i < sizeof(FirstHiddenLayerToSecondHiddenLayerWeight) / sizeof(FirstHiddenLayerToSecondHiddenLayerWeight[0]) - 1; i++)
+		for (i = 0; i < sizeof(FirstHiddenLayerToSecondHiddenLayerWeight) / sizeof(*FirstHiddenLayerToSecondHiddenLayerWeight) - 1; i++)
 		{
 			FString strWeight;
 			content.Split(LINE_TERMINATOR, &strWeight, &content);
@@ -148,7 +148,7 @@ void ABoxer::LoadWeights(const int agentId)
 	if (FPaths::FileExists(*path))
 	{
 		FFileHelper::LoadFileToString(content, *path, FFileHelper::EHashOptions::None, (uint32_t)0u);
-		for (i = 0; i < sizeof(SecondHiddenLayerToOutputWeight) / sizeof(SecondHiddenLayerToOutputWeight[0]) - 1; i++)
+		for (i = 0; i < sizeof(SecondHiddenLayerToOutputWeight) / sizeof(*SecondHiddenLayerToOutputWeight) - 1; i++)
 		{
 			FString strWeight;
 			content.Split(LINE_TERMINATOR, &strWeight, &content);

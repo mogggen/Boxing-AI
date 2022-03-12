@@ -23,30 +23,38 @@ public:
 	AGameLogic();
 	
 	int agentId = 0;
+	ABoxer* boxer;
+	ABoxer* boxer2;
 	FFileHelper FileHelper;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	void StartBatch(const unsigned int batchSize);
-
-
+public:
 	UFUNCTION(BlueprintCallable)
 	int GetAgentId();
 	
+	UFUNCTION(BlueprintCallable)
+	ABoxer* GetBoxer();
+
+	UFUNCTION(BlueprintCallable)
+	ABoxer* GetBoxer2();
+
+	UFUNCTION(BlueprintCallable)
+	void SetBoxer(ABoxer* boxer);
+
+	UFUNCTION(BlueprintCallable)
+	void SetBoxer2(ABoxer* boxer2);
+
 	UFUNCTION(BlueprintCallable)
 	void SetAgentId(const int agentId);
 
 	UFUNCTION(BlueprintCallable)
 	void SaveScore(const float score);
 
-	FString LoadScore();
+	bool LoadScore(float& score);
 
 	UFUNCTION(BlueprintCallable)
-	void NaturalSelection(const float mortality=.5f, const float propability = 0.01, const float mutability=0.01f);
+	void NaturalSelection(const float mortality=.5f, const float propability = 0.01f, const float mutability=0.01f);
 };
