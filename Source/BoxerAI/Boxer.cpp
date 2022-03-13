@@ -60,7 +60,7 @@ void ABoxer::SaveWeights(const int agentId)
 {
 	size_t i;
 	// Save inputs to first hidden layer weights
-	FString path = FPaths::ProjectDir() + TEXT("\\Weights\\") + FString::FromInt(agentId) + TEXT(".ih1");
+	FString path = FPaths::ProjectDir() + TEXT("Weights/") + FString::FromInt(agentId) + TEXT(".ih1");
 	FString content = TEXT("");
 	
 	FFileHelper::SaveStringToFile(content, *path, FFileHelper::EEncodingOptions::AutoDetect, (uint32_t)0u);
@@ -72,7 +72,7 @@ void ABoxer::SaveWeights(const int agentId)
 
 
 	// Save first to second hidden layer weights
-	path = FPaths::ProjectDir() + TEXT("\\Weights\\") + FString::FromInt(agentId) + TEXT(".h1h2");
+	path = FPaths::ProjectDir() + TEXT("/Weights/") + FString::FromInt(agentId) + TEXT(".h1h2");
 	content = TEXT("");
 	
 	FFileHelper::SaveStringToFile(content, *path, FFileHelper::EEncodingOptions::AutoDetect, (uint32_t)0u);
@@ -84,7 +84,7 @@ void ABoxer::SaveWeights(const int agentId)
 
 
 	// Save second hidden to output layer weights
-	path = FPaths::ProjectDir() + TEXT("\\Weights\\") + FString::FromInt(agentId) + TEXT(".h2o");
+	path = FPaths::ProjectDir() + TEXT("/Weights/") + FString::FromInt(agentId) + TEXT(".h2o");
 	content = TEXT("");
 	
 	FFileHelper::SaveStringToFile(content, *path, FFileHelper::EEncodingOptions::AutoDetect, (uint32_t)0u);
@@ -101,7 +101,7 @@ void ABoxer::LoadWeights(const int agentId)
 {
 	size_t i = 0;
 	// Load inputs to first hidden layer weights
-	FString path = FPaths::ProjectDir() + TEXT("\\Weights\\") + FString::FromInt(agentId) + TEXT(".ih1");
+	FString path = FPaths::ProjectDir() + TEXT("Weights/") + FString::FromInt(agentId) + TEXT(".ih1");
 	FString content;
 	if (FPaths::FileExists(*path))
 	{

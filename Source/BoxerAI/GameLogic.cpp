@@ -50,14 +50,14 @@ void AGameLogic::SetBoxer2(ABoxer* _boxer2)
 
 void AGameLogic::SaveScore(const float _score)
 {
-	FString path = FPaths::ProjectDir() + TEXT("\\Weights\\") + FString::FromInt(agentId) + TEXT(".score");
+	FString path = FPaths::ProjectDir() + TEXT("Weights/") + FString::FromInt(agentId) + TEXT(".score");
 	FString content = FString::SanitizeFloat(_score);
 	FFileHelper::SaveStringToFile(content, *path, FFileHelper::EEncodingOptions::AutoDetect);
 }
 
 bool AGameLogic::LoadScore(float& _score)
 {
-	FString path = FPaths::ProjectDir() + TEXT("\\Weights\\") + FString::FromInt(agentId) + TEXT(".score");
+	FString path = FPaths::ProjectDir() + TEXT("Weights/") + FString::FromInt(agentId) + TEXT(".score");
 	FString content;
 	if (FPaths::FileExists(*path))
 	{
