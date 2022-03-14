@@ -64,7 +64,7 @@ void ABoxer::SaveWeights(const int agentId)
 	FString content = TEXT("");
 	
 	FFileHelper::SaveStringToFile(content, *path, FFileHelper::EEncodingOptions::AutoDetect, (uint32_t)0u);
-	for (i = 0; i < sizeof(InputLayerToFirstHiddenLayerWeight) / sizeof(*InputLayerToFirstHiddenLayerWeight) - 1; i++)
+	for (i = 0; i < sizeof(InputLayerToFirstHiddenLayerWeight) / sizeof(InputLayerToFirstHiddenLayerWeight[0]) - 1; i++)
 	{
 		content += FString::SanitizeFloat(InputLayerToFirstHiddenLayerWeight[i]) + LINE_TERMINATOR;
 	}

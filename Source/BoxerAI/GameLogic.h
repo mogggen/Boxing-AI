@@ -36,18 +36,6 @@ public:
 	int GetAgentId();
 	
 	UFUNCTION(BlueprintCallable)
-	ABoxer* GetBoxer();
-
-	UFUNCTION(BlueprintCallable)
-	ABoxer* GetBoxer2();
-
-	UFUNCTION(BlueprintCallable)
-	void SetBoxer(ABoxer* boxer);
-
-	UFUNCTION(BlueprintCallable)
-	void SetBoxer2(ABoxer* boxer2);
-
-	UFUNCTION(BlueprintCallable)
 	void SetAgentId(const int agentId);
 
 	UFUNCTION(BlueprintCallable)
@@ -56,5 +44,5 @@ public:
 	bool LoadScore(float& score);
 
 	UFUNCTION(BlueprintCallable)
-	void NaturalSelection(const float mortality=.5f, const float propability = 0.01f, const float mutability=0.01f);
+	void NaturalSelection(ABoxer* handle, const float mortality=.5f, const float propability = 0.01f, const float mutability=0.01f);
 };

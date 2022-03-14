@@ -28,26 +28,6 @@ void AGameLogic::SetAgentId(const int _agentId)
 	agentId = _agentId;
 }
 
-ABoxer* AGameLogic::GetBoxer()
-{
-	return boxer;
-}
-
-ABoxer* AGameLogic::GetBoxer2()
-{
-	return boxer2;
-}
-
-void AGameLogic::SetBoxer(ABoxer* _boxer)
-{
-	boxer = _boxer;
-}
-
-void AGameLogic::SetBoxer2(ABoxer* _boxer2)
-{
-	boxer2 = _boxer2;
-}
-
 void AGameLogic::SaveScore(const float _score)
 {
 	FString path = FPaths::ProjectDir() + TEXT("Weights/") + FString::FromInt(agentId) + TEXT(".score");
@@ -71,7 +51,7 @@ bool AGameLogic::LoadScore(float& _score)
 	}
 }
 
-void AGameLogic::NaturalSelection(const float mortality, const float propability, const float mutability)
+void AGameLogic::NaturalSelection(ABoxer* _handle, const float mortality, const float propability, const float mutability)
 {
 	float score[40];
 	float fitnessSum = 0.f;
