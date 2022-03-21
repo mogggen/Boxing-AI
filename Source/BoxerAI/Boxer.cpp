@@ -16,8 +16,6 @@ ABoxer::ABoxer()
 void ABoxer::BeginPlay()
 {
 	Super::BeginPlay();
-
-	srand((unsigned int)time(NULL));
 }
 
 void ABoxer::SetPosition(const int index, const FVector _position)
@@ -72,7 +70,7 @@ void ABoxer::SaveWeights(const int agentId)
 
 
 	// Save first to second hidden layer weights
-	path = FPaths::ProjectDir() + TEXT("/Weights/") + FString::FromInt(agentId) + TEXT(".h1h2");
+	path = FPaths::ProjectDir() + TEXT("Weights/") + FString::FromInt(agentId) + TEXT(".h1h2");
 	content = TEXT("");
 	
 	FFileHelper::SaveStringToFile(content, *path, FFileHelper::EEncodingOptions::AutoDetect, (uint32_t)0u);
@@ -84,7 +82,7 @@ void ABoxer::SaveWeights(const int agentId)
 
 
 	// Save second hidden to output layer weights
-	path = FPaths::ProjectDir() + TEXT("/Weights/") + FString::FromInt(agentId) + TEXT(".h2o");
+	path = FPaths::ProjectDir() + TEXT("Weights/") + FString::FromInt(agentId) + TEXT(".h2o");
 	content = TEXT("");
 	
 	FFileHelper::SaveStringToFile(content, *path, FFileHelper::EEncodingOptions::AutoDetect, (uint32_t)0u);

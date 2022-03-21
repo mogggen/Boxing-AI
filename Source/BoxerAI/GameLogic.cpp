@@ -41,7 +41,7 @@ bool AGameLogic::LoadScore(float& _score)
 	FString content;
 	if (FPaths::FileExists(*path))
 	{
-		FFileHelper::SaveStringToFile(content, *path, FFileHelper::EEncodingOptions::AutoDetect, (uint32_t)0u);
+		FFileHelper::LoadFileToString(content, *path, FFileHelper::EHashOptions::None, (uint32_t)0u);
 		_score = FCString::Atof(*content);
 		return true;
 	}
@@ -63,7 +63,11 @@ void AGameLogic::NaturalSelection(ABoxer* _handle, const float mortality, const 
 	// find min and max values
 	for (agentId = 0; agentId < 40; agentId++)
 	{
-		if (LoadScore(score[agentId]))
+		if (!LoadScore(score[agentId]))
+		{
+			// should only happen the first time
+			score[agentId] = 0.f;
+		}
 		
 		if (min > score[agentId])
 		{
@@ -76,7 +80,7 @@ void AGameLogic::NaturalSelection(ABoxer* _handle, const float mortality, const 
 		}
 	}
 
-	// make sure the fitnessSum represents the Scores when they are non-negative values
+	// make sure the fitnessSum represents the Scores where they're non-negative values
 	for (size_t i = 0; i < 40; i++)
 	{
 		score[i] += min;
@@ -92,6 +96,7 @@ void AGameLogic::NaturalSelection(ABoxer* _handle, const float mortality, const 
 	
 	for (size_t i = 0; i < 40; i++)
 	{
+		hasDied[i] = false;
 		deathPropability[i] = fitnessSum / score[i];
 		deathSum += deathPropability[i];
 	}
@@ -108,12 +113,14 @@ void AGameLogic::NaturalSelection(ABoxer* _handle, const float mortality, const 
 			{
 				if (hasDied[j])
 				{
+					// start over
 					j = 0;
 					runningDeath = 0.f;
 					theNotChosen = FMath::RandRange(0.f, deathSum);
 				}
 				else
 				{
+					// picked index j
 					break;
 				}
 			}
