@@ -21,8 +21,6 @@ class BOXERAI_API ABoxer : public AActor
 public:	
 	// Sets default values for this actor's properties
 	ABoxer();
-
-	int epoch = 0;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -50,8 +48,7 @@ public:
 	// the opponent	+500 (* ForceFactor)
 
 	// +1p for every second without collision with floor
-	// standing somewhat up right is also rewarding
-	//
+	// standing somewhat up right is also rewarded by a increase in overlapScore
 
 
 	// 95 inputs (let's try with 38 inputs instead, position and velocity)

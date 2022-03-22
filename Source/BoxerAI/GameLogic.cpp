@@ -15,7 +15,6 @@ AGameLogic::AGameLogic()
 void AGameLogic::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 int AGameLogic::GetAgentId()
@@ -30,18 +29,20 @@ void AGameLogic::SetAgentId(const int _agentId)
 
 void AGameLogic::SaveScore(const float _score)
 {
-	FString path = FPaths::ProjectDir() + TEXT("Weights/") + FString::FromInt(agentId) + TEXT(".score");
+	FString path = FPaths::ProjectDir() + TEXT("Weights\\") + FString::FromInt(agentId) + TEXT(".score");
+	path = path.Replace(TEXT("/"), TEXT("\\"));
 	FString content = FString::SanitizeFloat(_score);
-	FFileHelper::SaveStringToFile(content, *path, FFileHelper::EEncodingOptions::AutoDetect);
+	FFileHelper::SaveStringToFile(content, *path);
 }
 
 bool AGameLogic::LoadScore(float& _score)
 {
-	FString path = FPaths::ProjectDir() + TEXT("Weights/") + FString::FromInt(agentId) + TEXT(".score");
+	FString path = FPaths::ProjectDir() + TEXT("Weights\\") + FString::FromInt(agentId) + TEXT(".score");
+	path = path.Replace(TEXT("/"), TEXT("\\"));
 	FString content;
 	if (FPaths::FileExists(*path))
 	{
-		FFileHelper::LoadFileToString(content, *path, FFileHelper::EHashOptions::None, (uint32_t)0u);
+		FFileHelper::LoadFileToString(content, *path);
 		_score = FCString::Atof(*content);
 		return true;
 	}
@@ -51,13 +52,118 @@ bool AGameLogic::LoadScore(float& _score)
 	}
 }
 
-void AGameLogic::NaturalSelection(ABoxer* _handle, const float mortality, const float propability, const float mutability)
+void AGameLogic::SaveWeights()
+{
+	// Save inputs to first hidden layer weights
+	FString path = FPaths::ProjectDir() + TEXT("Weights\\") + FString::FromInt(agentId);
+	path = path.Replace(TEXT("/"), TEXT("\\"));
+
+	FString fileExtension = TEXT(".ih1");
+	FString content = TEXT("");
+	
+	for (size_t i = 0; i < 12996; i++)
+	{
+		content += FString::SanitizeFloat(InputLayerToFirstHiddenLayerWeight[i]) + LINE_TERMINATOR;
+	}
+	FFileHelper::SaveStringToFile(content, *(path + fileExtension));
+
+
+	// Save first to second hidden layer weights
+	fileExtension = TEXT(".h1h2");
+	content = TEXT("");
+	
+	for (size_t i = 0; i < 6498; i++)
+	{
+		content += FString::SanitizeFloat(FirstHiddenLayerToSecondHiddenLayerWeight[i]) + LINE_TERMINATOR;
+	}
+	FFileHelper::SaveStringToFile(content, *(path + fileExtension));
+
+
+	// Save second hidden to output layer weights
+	fileExtension = TEXT(".h2o");
+	content = TEXT("");
+	
+	for (size_t i = 0; i < 3249; i++)
+	{
+		content += FString::SanitizeFloat(SecondHiddenLayerToOutputWeight[i]) + LINE_TERMINATOR;
+	}
+	FFileHelper::SaveStringToFile(content, *(path + fileExtension));
+}
+
+void AGameLogic::LoadWeights()
+{
+	// Load inputs to first hidden layer weights
+	FString path = FPaths::ProjectDir() + TEXT("Weights\\") + FString::FromInt(agentId);
+	path = path.Replace(TEXT("/"), TEXT("\\"));
+
+	FString fileExtension = TEXT(".ih1");
+	FString content = TEXT("");
+	if (FPaths::FileExists(*(path + fileExtension)))
+	{
+		FFileHelper::LoadFileToString(content, *(path + fileExtension));
+		for (size_t i = 0; i < 12996; i++)
+		{
+			FString strWeight;
+			content.Split(LINE_TERMINATOR, &strWeight, &content);
+			float weight = FCString::Atof(*strWeight);
+			InputLayerToFirstHiddenLayerWeight[i] = weight;
+		}
+	}
+	else
+	{
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 1.5, FColor::Green, TEXT("0-1"));
+		SaveWeights();
+	}
+
+	// Load weights from first to second hidden layer weights
+	fileExtension = TEXT(".h1h2");
+	if (FPaths::FileExists(*(path + fileExtension)))
+	{
+		FFileHelper::LoadFileToString(content, *(path + fileExtension));
+		for (size_t i = 0; i < 6498; i++)
+		{
+			FString strWeight;
+			content.Split(LINE_TERMINATOR, &strWeight, &content);
+			float weight = FCString::Atof(*strWeight);
+			FirstHiddenLayerToSecondHiddenLayerWeight[i] = weight;
+		}
+	}
+	else
+	{
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 1.5, FColor::Green, TEXT("1-2"));
+		SaveWeights();
+	}
+
+	// Load weights from second hidden to output layer weights
+	fileExtension = TEXT(".h2o");
+	if (FPaths::FileExists(*(path + fileExtension)))
+	{
+		FFileHelper::LoadFileToString(content, *(path + fileExtension));
+		for (size_t i = 0; i < 3249; i++)
+		{
+			FString strWeight;
+			content.Split(LINE_TERMINATOR, &strWeight, &content);
+			float weight = FCString::Atof(*strWeight);
+			SecondHiddenLayerToOutputWeight[i] = weight;
+		}
+	}
+	else
+	{
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 1.5, FColor::Green, TEXT("2-3"));
+		SaveWeights();
+	}
+}
+
+void AGameLogic::NaturalSelection(const float mortality, const float propability, const float mutability)
 {
 	float score[40];
 	float fitnessSum = 0.f;
 	float runningSum = 0.f;
 	float min = std::numeric_limits<float>::max(); // shift values by this amount
-	float max = std::numeric_limits<float>::min(); // don't mutate
+	float max = std::numeric_limits<float>::min() + 1.f; // don't mutate
 	int maxIndex;
 
 	// find min and max values
@@ -65,7 +171,7 @@ void AGameLogic::NaturalSelection(ABoxer* _handle, const float mortality, const 
 	{
 		if (!LoadScore(score[agentId]))
 		{
-			// should only happen the first time
+			// should never happen
 			score[agentId] = 0.f;
 		}
 		
@@ -124,6 +230,8 @@ void AGameLogic::NaturalSelection(ABoxer* _handle, const float mortality, const 
 					break;
 				}
 			}
+			if (GEngine)
+				GEngine->AddOnScreenDebugMessage(-1, 1.5, FColor::Green, FString::Printf(TEXT("%i"), j));
 			runningDeath += deathPropability[j];
 		}
 
@@ -147,16 +255,16 @@ void AGameLogic::NaturalSelection(ABoxer* _handle, const float mortality, const 
 	for (agentId = 0; agentId < 40; agentId++)
 	{
 		if (score[agentId] == max) continue;
-		boxer->LoadWeights(agentId);
+		LoadWeights();
 		for (size_t i = 0; i < 12996; i++)
 		{
-			boxer->InputLayerToFirstHiddenLayerWeight[i] *= FMath::RandRange(-mutability, mutability);
+			InputLayerToFirstHiddenLayerWeight[i] *= FMath::RandRange(-mutability, mutability);
 			if (i < 6498)
-				boxer->FirstHiddenLayerToSecondHiddenLayerWeight[i] *= FMath::RandRange(-mutability, mutability);
+				FirstHiddenLayerToSecondHiddenLayerWeight[i] *= FMath::RandRange(-mutability, mutability);
 			if (i < 3249)
-				boxer->SecondHiddenLayerToOutputWeight[i] *= FMath::RandRange(-mutability, mutability);
+				SecondHiddenLayerToOutputWeight[i] *= FMath::RandRange(-mutability, mutability);
 		}
-		boxer->SaveWeights(agentId);
+		SaveWeights();
 	}
 	agentId = 0;
 }

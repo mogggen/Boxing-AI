@@ -56,110 +56,111 @@ void ABoxer::RandomizeWeights()
 
 void ABoxer::SaveWeights(const int agentId)
 {
-	size_t i;
 	// Save inputs to first hidden layer weights
-	FString path = FPaths::ProjectDir() + TEXT("Weights/") + FString::FromInt(agentId) + TEXT(".ih1");
+	FString path = FPaths::ProjectDir() + TEXT("Weights\\") + FString::FromInt(agentId);
+	path = path.Replace(TEXT("/"), TEXT("\\"));
+
+	FString fileExtension = TEXT(".ih1");
 	FString content = TEXT("");
 	
-	FFileHelper::SaveStringToFile(content, *path, FFileHelper::EEncodingOptions::AutoDetect, (uint32_t)0u);
-	for (i = 0; i < sizeof(InputLayerToFirstHiddenLayerWeight) / sizeof(InputLayerToFirstHiddenLayerWeight[0]) - 1; i++)
+	for (size_t i = 0; i < 12996; i++)
 	{
 		content += FString::SanitizeFloat(InputLayerToFirstHiddenLayerWeight[i]) + LINE_TERMINATOR;
 	}
-	content += FString::SanitizeFloat(InputLayerToFirstHiddenLayerWeight[++i]);
+	FFileHelper::SaveStringToFile(content, *(path + fileExtension));
 
 
 	// Save first to second hidden layer weights
-	path = FPaths::ProjectDir() + TEXT("Weights/") + FString::FromInt(agentId) + TEXT(".h1h2");
+	fileExtension = TEXT(".h1h2");
 	content = TEXT("");
 	
-	FFileHelper::SaveStringToFile(content, *path, FFileHelper::EEncodingOptions::AutoDetect, (uint32_t)0u);
-	for (i = 0; i < sizeof(FirstHiddenLayerToSecondHiddenLayerWeight) / sizeof(*FirstHiddenLayerToSecondHiddenLayerWeight) - 1; i++)
+	for (size_t i = 0; i < 6498; i++)
 	{
 		content += FString::SanitizeFloat(FirstHiddenLayerToSecondHiddenLayerWeight[i]) + LINE_TERMINATOR;
 	}
-	content += FString::SanitizeFloat(FirstHiddenLayerToSecondHiddenLayerWeight[++i]);
+	FFileHelper::SaveStringToFile(content, *(path + fileExtension));
 
 
 	// Save second hidden to output layer weights
-	path = FPaths::ProjectDir() + TEXT("Weights/") + FString::FromInt(agentId) + TEXT(".h2o");
+	fileExtension = TEXT(".h2o");
 	content = TEXT("");
 	
-	FFileHelper::SaveStringToFile(content, *path, FFileHelper::EEncodingOptions::AutoDetect, (uint32_t)0u);
-	for (i = 0; i < sizeof(SecondHiddenLayerToOutputWeight) / sizeof(*SecondHiddenLayerToOutputWeight) - 1; i++)
+	for (size_t i = 0; i < 3249; i++)
 	{
 		content += FString::SanitizeFloat(SecondHiddenLayerToOutputWeight[i]) + LINE_TERMINATOR;
 	}
-	content += FString::SanitizeFloat(SecondHiddenLayerToOutputWeight[++i]);
+	FFileHelper::SaveStringToFile(content, *(path + fileExtension));
 }
 
 
 
 void ABoxer::LoadWeights(const int agentId)
 {
-	size_t i = 0;
 	// Load inputs to first hidden layer weights
-	FString path = FPaths::ProjectDir() + TEXT("Weights/") + FString::FromInt(agentId) + TEXT(".ih1");
-	FString content;
-	if (FPaths::FileExists(*path))
+	FString path = FPaths::ProjectDir() + TEXT("Weights\\") + FString::FromInt(agentId);
+	path = path.Replace(TEXT("/"), TEXT("\\"));
+
+	FString fileExtension = TEXT(".ih1");
+	FString content = TEXT("");
+	if (FPaths::FileExists(*(path + fileExtension)))
 	{
-		FFileHelper::LoadFileToString(content, *path, FFileHelper::EHashOptions::None, (uint32_t)0u);
-		for (i = 0; i < sizeof(InputLayerToFirstHiddenLayerWeight) / sizeof(*InputLayerToFirstHiddenLayerWeight) - 1; i++)
+		FFileHelper::LoadFileToString(content, *(path + fileExtension));
+		for (size_t i = 0; i < 12996; i++)
 		{
 			FString strWeight;
 			content.Split(LINE_TERMINATOR, &strWeight, &content);
 			float weight = FCString::Atof(*strWeight);
 			InputLayerToFirstHiddenLayerWeight[i] = weight;
 		}
-		InputLayerToFirstHiddenLayerWeight[++i] = FCString::Atof(*content);
 	}
 	else
 	{
 		if (GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 1.5, FColor::Green, TEXT("0-1"));
 		RandomizeWeights();
+		SaveWeights(agentId);
 	}
 
 	// Load weights from first to second hidden layer weights
-	path = FPaths::ProjectDir() + TEXT("\\Weights\\") + FString::FromInt(agentId) + TEXT(".h1h2");
-	if (FPaths::FileExists(*path))
+	fileExtension = TEXT(".h1h2");
+	if (FPaths::FileExists(*(path + fileExtension)))
 	{
-		FFileHelper::LoadFileToString(content, *path, FFileHelper::EHashOptions::None, (uint32_t)0u);
-		for (i = 0; i < sizeof(FirstHiddenLayerToSecondHiddenLayerWeight) / sizeof(*FirstHiddenLayerToSecondHiddenLayerWeight) - 1; i++)
+		FFileHelper::LoadFileToString(content, *(path + fileExtension));
+		for (size_t i = 0; i < 6498; i++)
 		{
 			FString strWeight;
 			content.Split(LINE_TERMINATOR, &strWeight, &content);
 			float weight = FCString::Atof(*strWeight);
 			FirstHiddenLayerToSecondHiddenLayerWeight[i] = weight;
 		}
-		FirstHiddenLayerToSecondHiddenLayerWeight[++i] = FCString::Atof(*content);
 	}
 	else
 	{
 		if (GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 1.5, FColor::Green, TEXT("1-2"));
 		RandomizeWeights();
+		SaveWeights(agentId);
 	}
 
 	// Load weights from second hidden to output layer weights
-	path = FPaths::ProjectDir() + TEXT("\\Weights\\") + FString::FromInt(agentId) + TEXT(".h2o");
-	if (FPaths::FileExists(*path))
+	fileExtension = TEXT(".h2o");
+	if (FPaths::FileExists(*(path + fileExtension)))
 	{
-		FFileHelper::LoadFileToString(content, *path, FFileHelper::EHashOptions::None, (uint32_t)0u);
-		for (i = 0; i < sizeof(SecondHiddenLayerToOutputWeight) / sizeof(*SecondHiddenLayerToOutputWeight) - 1; i++)
+		FFileHelper::LoadFileToString(content, *(path + fileExtension));
+		for (size_t i = 0; i < 3249; i++)
 		{
 			FString strWeight;
 			content.Split(LINE_TERMINATOR, &strWeight, &content);
 			float weight = FCString::Atof(*strWeight);
 			SecondHiddenLayerToOutputWeight[i] = weight;
 		}
-		SecondHiddenLayerToOutputWeight[++i] = FCString::Atof(*content);
 	}
 	else
 	{
 		if (GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 1.5, FColor::Green, TEXT("2-3"));
 		RandomizeWeights();
+		SaveWeights(agentId);
 	}
 }
 

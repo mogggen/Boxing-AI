@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include <limits>
-#include "Boxer.h"
 #include "Misc/Paths.h"
 #include "Math/UnrealMathUtility.h"
 #include "Misc/CString.h"
@@ -23,8 +22,9 @@ public:
 	AGameLogic();
 	
 	int agentId = 0;
-	ABoxer* boxer;
-	ABoxer* boxer2;
+	float InputLayerToFirstHiddenLayerWeight[12996];
+	float FirstHiddenLayerToSecondHiddenLayerWeight[6498];
+	float SecondHiddenLayerToOutputWeight[3249];
 	FFileHelper FileHelper;
 
 protected:
@@ -43,6 +43,10 @@ public:
 
 	bool LoadScore(float& score);
 
+	void SaveWeights();
+
+	void LoadWeights();
+
 	UFUNCTION(BlueprintCallable)
-	void NaturalSelection(ABoxer* handle, const float mortality=.5f, const float propability = 0.01f, const float mutability=0.01f);
+	void NaturalSelection(const float mortality=.5f, const float propability = 0.01f, const float mutability=0.01f);
 };

@@ -12,6 +12,7 @@
 	"settings": {
 		"typescript.tsc.autoDetect": "off",
 		"files.associations": {
+			"*.bf": "brainfuck",
 			"atomic": "cpp",
 			"bit": "cpp",
 			"cctype": "cpp",
@@ -55,7 +56,8 @@
 			"xstddef": "cpp",
 			"xstring": "cpp",
 			"xtr1common": "cpp",
-			"xutility": "cpp"
+			"xutility": "cpp",
+			"*.rh": "cpp"
 		}
 	},
 	"extensions": {
