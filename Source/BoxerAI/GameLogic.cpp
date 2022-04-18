@@ -163,7 +163,7 @@ void AGameLogic::NaturalSelection(const float mortality, const float propability
 	float fitnessSum = 0.f;
 	float runningSum = 0.f;
 	float min = std::numeric_limits<float>::max(); // shift values by this amount
-	float max = std::numeric_limits<float>::min() + 1.f; // don't mutate
+	float max = std::numeric_limits<float>::lowest(); // don't mutate
 	int maxIndex;
 
 	// find min and max values
